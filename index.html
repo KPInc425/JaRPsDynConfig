@@ -14,7 +14,14 @@
         </style>
 
     </head>
-    <body>
-        TamingSpeedMultiplier=8.0 HarvestAmountMultiplier=50.0 XPMultiplier=5.0 MatingIntervalMultiplier=0.25 BabyMatureSpeedMultiplier=15.0 EggHatchSpeedMultiplier=15.0 BabyCuddleIntervalMultiplier=1.0 BabyImprintAmountMultiplier=1.0 HexagonRewardMultiplier=3.0
-    </body>
+      <div id="ajaxContent"></div>
+      <script>
+      var Webflow = Webflow || [];
+      Webflow.push(function() {
+        $.get('https://cdn.rawgit.com/KPInc425/fde69d5d932087792e7338c8e86ff88e/raw/c9bd65a8b0e57382e8bf1d3dc689de98ede6c5ab/dynamicconfig.ini', function(data) {
+          $('#ajaxContent').append(data);
+        });
+      });
+      </script>
+    
 </html>
