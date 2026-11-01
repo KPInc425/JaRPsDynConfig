@@ -1,64 +1,78 @@
 # JaRPsDynConfig
 
 The rate page the ARK servers read at startup via `?customdynamicconfigurl=` and
-`-UseDynamicConfig`. GitHub Pages serves the `main` branch at
+`-UseDynamicConfig`. GitHub Pages serves `main` at
 **http://ilgamingarksettings.servegame.com/**, so a commit to `main` is the deploy.
 
-The game parses `Key=Value` lines out of the HTML body. Everything else on the page
-is cosmetic.
+The game parses `Key=Value` lines out of the HTML body. Everything else is cosmetic.
+
+## How the numbers are made
+
+```
+final rate = rates.base.json (our baseline, already above official)
+           x official.rates.json (the official event factor for that setting)
+```
+
+Per setting, not one global number, because ARK bumps categories differently: a
+typical official post is 2x taming, 2x harvesting, 2x XP, 0.5x mating interval,
+2x maturation, 2x hatching, 0.6x cuddle interval, 2x imprinting, 1x hexagon reward.
+An interval factor below 1 shrinks our interval, which is the same as speeding it up.
 
 ## Why this exists
 
-Rates used to be edited by hand in `index.html` for every event. On 2026-11-01 the
-live "2x" page turned out to be four-ninths wrong: taming, harvest, XP and hexagons
-were at 2x, while mating interval, baby mature, egg hatch, imprint cuddle and imprint
-amount were still sitting at 4x levels from the previous event, because rolling a
-number back meant remembering every place it had been changed.
-
-Now there is one source of truth and one writer.
+Rates used to be hand-edited in `index.html` for every event. On 2026-11-01 the live
+"2x" page turned out to be wrong in five of nine settings: taming, harvest, XP and
+hexagons were at 2x while mating interval, mature, hatch, cuddle and imprint were
+still at 4x from the previous event, because rolling a number back meant remembering
+every place it had changed.
 
 ## Files
 
 | File | What it is |
 |---|---|
-| `rates.base.json` | Our baseline rates, already higher than official. `mode` says whether an event bump multiplies the value or divides it (intervals divide, so the action gets faster). |
-| `multiplier.json` | The official event bump. `1` = no event, `1.5`, `2`, `3`, `4` as official runs them. This is the only number that changes between events. |
+| `rates.base.json` | Our baseline. Edit only when the baseline itself changes, never for an event. |
+| `official.rates.json` | Official event factors, scraped from Discord. Written by the sync job, do not hand-edit. |
+| `scripts/parse-official.py` | Reads the newest Official post from the rates channel and writes `official.rates.json`. |
 | `scripts/render.mjs` | The only thing that writes `index.html`. |
 | `index.html` | Generated. Do not hand-edit. |
 
-## Changing rates for an official event
+## Publishing
 
-GitHub UI: **Actions -> Publish dynamic rates -> Run workflow**, set `multiplier` to
-the official bump and `label` to something readable. It renders, verifies, and commits
-`index.html` + `multiplier.json`, which is what deploys.
+Everything runs on the prod box (`steam@192.168.0.27`), because that is where the
+Discord bot token and the GitHub SSH key already live:
 
-Locally, the same thing:
-
-```bash
-node scripts/render.mjs --multiplier 2   # render at the official 2x bump
-node scripts/render.mjs --check          # fail if index.html is stale (CI gate)
-node scripts/render.mjs --json           # print the computed numbers, write nothing
-git add index.html multiplier.json && git commit -m "rates: official 2x" && git push
+```
+/home/steam/rates-sync.sh --dry-run   # parse, render, show the diff, publish nothing
+/home/steam/rates-sync.sh             # publish if the page or the factors changed
 ```
 
-Edit `rates.base.json` only when the baseline itself changes, not for events.
+It pulls, scrapes the newest Official post, renders, and commits plus pushes only
+when something actually changed. Log at `/home/steam/rates-sync.log`.
 
-## Verifying what a server is actually running
+Checking by hand:
 
-```bash
-curl -s http://ilgamingarksettings.servegame.com/ | sed -e 's/<[^>]*>//g' | grep '='
+```
+node scripts/render.mjs --check   # exit 1 if index.html is stale
+node scripts/render.mjs --json    # the computed numbers
+python3 scripts/parse-official.py # the parsed official factors
 ```
 
-Compare that to `node scripts/render.mjs --json`.
+## Triggering it
 
-## Automating the official bump
+Discord has no "new message in this channel" webhook, so there are only two ways to
+react to a post:
 
-`multiplier.json.source` records where the current value came from (`manual`,
-`workflow_dispatch`, or a tracker). To drive it from the channel that tracks official
-rates, a scheduled workflow needs two things:
+- **Poll** — a cron on the prod box runs `rates-sync.sh` every few minutes. Simple,
+  no extra moving parts, up to a few minutes late. This is what is installed.
+- **Push** — a bot connected to the Discord gateway receives `MESSAGE_CREATE` the
+  instant a post lands and calls the same script. Instant, but it means running a
+  long-lived listener alongside the Controller Bot.
 
-1. The channel ID of the official-rate tracker.
-2. A `DISCORD_BOT_TOKEN` repository secret with read access to that channel.
+Either way the work is the same script, so switching is a one-line change.
 
-With those, the workflow can fetch the latest official multiplier, compare it to
-`multiplier.json`, and only render and commit when it actually changed.
+## Source channel
+
+`#official-ark-server-rates` (`1352482363518750720`) in KPInc425 Test Server. It
+follows ARK's rate feed and posts one embed per server type; only the embed titled
+"Official server rates updated at ..." is used, and a post is rejected unless all
+nine settings parse.
