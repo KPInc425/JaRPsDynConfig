@@ -1,0 +1,7 @@
+{
+  "_comment": "The official event bump. Our base rates in rates.base.json are already higher than official; this multiplies them. 1 = no official event, 2 = official 2x event, 1.5 = official 1.5x, etc. Only this file changes between events.",
+  "value": 2,
+  "label": "official 2x event",
+  "updated": "2026-11-01",
+  "source": "manual"
+}
