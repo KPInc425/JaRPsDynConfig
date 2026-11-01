@@ -1,11 +1,10 @@
 {
-  "_comment": "Official ARK event factors, scraped from the #official-ark-server-rates channel (1352482363518750720) by scripts/parse-official.py. Our final rate = rates.base.json base x these factors, per category. Written by the sync job; do not hand-edit.",
+  "_comment": "Official ARK event factors, scraped from the #official-ark-server-rates channel by scripts/parse-official.py. Final rate = rates.base.json base x these factors, per setting. Written by the sync job; do not hand-edit.",
   "source": "discord",
   "channel_id": "1352482363518750720",
   "source_message_id": "1565217611560652854",
   "posted_at": "2026-10-29T04:15:58.933000+00:00",
   "title": "Official server rates updated at <t:1793245620:t>",
-  "updated_at": "2026-11-01",
   "multipliers": {
     "TamingSpeedMultiplier": 2.0,
     "HarvestAmountMultiplier": 2.0,
@@ -16,5 +15,6 @@
     "BabyCuddleIntervalMultiplier": 0.6,
     "BabyImprintAmountMultiplier": 2.0,
     "HexagonRewardMultiplier": 1.0
-  }
+  },
+  "updated_at": "2026-11-01"
 }
