@@ -1,9 +1,9 @@
 {
-  "_comment": "Canonical 1x-normal values for JaRP's cluster. Derived from the BaseSettings commit (9396db3). 'mode' decides how an event multiplier is applied: multiply = value * N, divide = value / N (intervals shrink so the action gets faster).",
+  "_comment": "Our normal (no-event) rate set for JaRP's cluster. Harvest 4 matches GameUserSettings.ini on all six servers; the rest is the BaseSettings commit (9396db3). render.mjs multiplies EVERY setting by the official factor, including intervals, so an official 0.5 x Mating Interval halves our interval. The 'mode' field below is descriptive only and is not read by any script.",
   "name": "JaRPs DynConfig",
   "values": {
     "TamingSpeedMultiplier":        { "base": 1,    "mode": "multiply", "label": "Taming speed" },
-    "HarvestAmountMultiplier":      { "base": 2,    "mode": "multiply", "label": "Harvest yield" },
+    "HarvestAmountMultiplier":      { "base": 4,    "mode": "multiply", "label": "Harvest yield" },
     "XPMultiplier":                 { "base": 2,    "mode": "multiply", "label": "XP gain" },
     "MatingIntervalMultiplier":     { "base": 0.65, "mode": "divide",   "label": "Mating interval" },
     "BabyMatureSpeedMultiplier":    { "base": 5,    "mode": "multiply", "label": "Baby mature speed" },
