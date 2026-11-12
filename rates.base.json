@@ -1,5 +1,5 @@
 {
-  "_comment": "Our normal (no-event) rate set for JaRP's cluster. Every value is multiplied by the official event factor; render.mjs multiplies ALL nine, intervals included, so an official '0.5 x Mating Interval' halves our interval. Taming stays vanilla here on purpose: the speed-up lives in Game.ini, not this page (WildDinoCharacterFoodDrainMultiplier=4 makes tamed-in-progress dinos eat faster in real time while the same total food and the same kibble tier still decide the outcome; PassiveTameIntervalMultiplier=0.1 speeds passive tames 10x). 'mode' below is descriptive only and read by no script.",
+  "_comment": "Our normal (no-event) rate set for JaRP's cluster. Every value is multiplied by the official event factor; render.mjs multiplies ALL nine, intervals included, so an official '0.5 x Mating Interval' halves our interval. Taming stays vanilla here on purpose: the speed-up lives in Game.ini, not this page (WildDinoCharacterFoodDrainMultiplier=4 makes tamed-in-progress dinos eat faster in real time while the same total food and the same kibble tier still decide the outcome; PassiveTameIntervalMultiplier=0.1 speeds passive tames 10x). IMPRINT: per the official wiki, V = IAM / (TMT/(MSP*DCIT*CIM) - 0.25), so each cuddle is worth 100 divided by the number of cuddle slots OUR rates create, not the vanilla count. At MSP 8 and CIM 0.4 a Rex gets about 3 cuddles and 1.0 would leave it short of 100%; 3.0 clears it in 2. Verify any change to this with one hatch before trusting it. 'mode' below is descriptive only and read by no script.",
   "name": "JaRPs DynConfig",
   "values": {
     "TamingSpeedMultiplier":        { "base": 1,    "mode": "multiply", "label": "Taming speed" },
@@ -9,7 +9,7 @@
     "BabyMatureSpeedMultiplier":    { "base": 8,    "mode": "multiply", "label": "Baby mature speed" },
     "EggHatchSpeedMultiplier":      { "base": 8,    "mode": "multiply", "label": "Egg hatch speed" },
     "BabyCuddleIntervalMultiplier": { "base": 0.4,  "mode": "divide",   "label": "Imprint cuddle interval" },
-    "BabyImprintAmountMultiplier":  { "base": 1.0,  "mode": "multiply", "label": "Imprint amount" },
+    "BabyImprintAmountMultiplier":  { "base": 3.0,  "mode": "multiply", "label": "Imprint amount" },
     "HexagonRewardMultiplier":      { "base": 2.0,  "mode": "multiply", "label": "Hexagon reward" }
   }
 }
